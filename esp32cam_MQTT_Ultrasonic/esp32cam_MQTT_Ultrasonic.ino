@@ -25,6 +25,7 @@
 
 #include <WiFi.h>  // Biblioteca para el control de WiFi
 #include <PubSubClient.h> //Biblioteca para conexion MQTT
+#include <Ultrasonic.h>//Biblioteca para conectarse al sensor
 
 //Datos de WiFi
 const char* ssid = "SUPERCABLE_6715";  // Aquí debes poner el nombre de tu red
@@ -34,16 +35,19 @@ const char* password = "V19010404641";  // Aquí debes poner la contraseña de t
 const char* mqtt_server = "3.121.120.155"; // Si estas en una red local, coloca la IP asignada, en caso contrario, coloca la IP publica
 IPAddress server(3,121,120,155);
 
-// Objetos
-WiFiClient espClient; // Este objeto maneja los datos de conexion WiFi
-PubSubClient client(espClient); // Este objeto maneja los datos de conexion al broker
-
 // Variables
 int flashLedPin = 4;  // Para indicar el estatus de conexión
 int statusLedPin = 33; // Para ser controlado por MQTT
 long timeNow, timeLast; // Variables de control de tiempo no bloqueante
-int data = 0; // Contador
 int wait = 5000;  // Indica la espera cada 5 segundos para envío de mensajes MQTT
+int pinTrigger=15;//pin del trigger
+int pinEcho=14;//pin del echo
+int distance;//variable que almacena la lectura de la distancia
+
+// Objetos
+WiFiClient espClient; // Este objeto maneja los datos de conexion WiFi
+PubSubClient client(espClient); // Este objeto maneja los datos de conexion al broker
+Ultrasonic ultrasonic(pinTrigger, pinEcho);//objeto que maneja el sensor
 
 // Inicialización del programa
 void setup() {
@@ -87,7 +91,8 @@ void setup() {
   client.setCallback(callback); // Activar función de CallBack, permite recibir mensajes MQTT y ejecutar funciones a partir de ellos
   delay(1500);  // Esta espera es preventiva, espera a la conexión para no perder información
 
-  timeLast = millis (); // Inicia el control de tiempo
+  timeLast = millis (); //
+  Inicia el control de tiempo
 }// fin del void setup ()
 
 // Cuerpo del programa, bucle principal
@@ -102,11 +107,17 @@ void loop() {
   if (timeNow - timeLast > wait) { // Manda un mensaje por MQTT cada cinco segundos
     timeLast = timeNow; // Actualización de seguimiento de tiempo
 
-    data++; // Incremento a la variable para ser enviado por MQTT
-    char dataString[8]; // Define una arreglo de caracteres para enviarlos por MQTT, especifica la longitud del mensaje en 8 caracteres
-    dtostrf(data, 1, 2, dataString);  // Esta es una función nativa de leguaje AVR que convierte un arreglo de caracteres en una variable String
+    distance=ultrasonic.read();; // Incremento a la variable para ser enviado por MQTT
+    char 
+
+
+
+
+
+String[8]; // Define una arreglo de caracteres para enviarlos por MQTT, especifica la longitud del mensaje en 8 caracteres
+    dtostrf(distance, 1, 2, dataString);  // Esta es una función nativa de leguaje AVR que convierte un arreglo de caracteres en una variable String
     Serial.print("Contador: "); // Se imprime en monitor solo para poder visualizar que el evento sucede
-    Serial.println(dataString);
+    Serial.println(String);
     client.publish("esp32/data", dataString); // Esta es la función que envía los datos por MQTT, especifica el tema y el valor
   }// fin del if (timeNow - timeLast > wait)
 }// fin del void loop ()
