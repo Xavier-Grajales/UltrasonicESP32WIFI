@@ -32,8 +32,8 @@ const char* ssid = "SUPERCABLE_6715";  // Aquí debes poner el nombre de tu red
 const char* password = "V19010404641";  // Aquí debes poner la contraseña de tu red
 
 //Datos del broker MQTT
-const char* mqtt_server = "3.121.120.155"; // Si estas en una red local, coloca la IP asignada, en caso contrario, coloca la IP publica
-IPAddress server(3,121,120,155);
+const char* mqtt_server = "3.122.36.163"; // Si estas en una red local, coloca la IP asignada, en caso contrario, coloca la IP publica
+IPAddress server(3,122,36,163);
 
 // Variables
 int flashLedPin = 4;  // Para indicar el estatus de conexión
@@ -43,6 +43,7 @@ int wait = 5000;  // Indica la espera cada 5 segundos para envío de mensajes MQ
 int pinTrigger=15;//pin del trigger
 int pinEcho=14;//pin del echo
 int distance;//variable que almacena la lectura de la distancia
+int data;
 
 // Objetos
 WiFiClient espClient; // Este objeto maneja los datos de conexion WiFi
@@ -92,7 +93,7 @@ void setup() {
   delay(1500);  // Esta espera es preventiva, espera a la conexión para no perder información
 
   timeLast = millis (); //
-  Inicia el control de tiempo
+//  Inicia el control de tiempo
 }// fin del void setup ()
 
 // Cuerpo del programa, bucle principal
@@ -107,18 +108,12 @@ void loop() {
   if (timeNow - timeLast > wait) { // Manda un mensaje por MQTT cada cinco segundos
     timeLast = timeNow; // Actualización de seguimiento de tiempo
 
-    distance=ultrasonic.read();; // Incremento a la variable para ser enviado por MQTT
-    char 
-
-
-
-
-
-String[8]; // Define una arreglo de caracteres para enviarlos por MQTT, especifica la longitud del mensaje en 8 caracteres
+    distance=ultrasonic.read();// Incremento a la variable para ser enviado por MQTT
+    char dataString[8]; // Define una arreglo de caracteres para enviarlos por MQTT, especifica la longitud del mensaje en 8 caracteres
     dtostrf(distance, 1, 2, dataString);  // Esta es una función nativa de leguaje AVR que convierte un arreglo de caracteres en una variable String
-    Serial.print("Contador: "); // Se imprime en monitor solo para poder visualizar que el evento sucede
-    Serial.println(String);
-    client.publish("esp32/data", dataString); // Esta es la función que envía los datos por MQTT, especifica el tema y el valor
+    Serial.print("Distancia: "); // Se imprime en monitor solo para poder visualizar que el evento sucede
+    Serial.println(dataString);
+    client.publish("codgioiot/distancia/XavierGrajales", dataString); // Esta es la función que envía los datos por MQTT, especifica el tema y el valor
   }// fin del if (timeNow - timeLast > wait)
 }// fin del void loop ()
 
