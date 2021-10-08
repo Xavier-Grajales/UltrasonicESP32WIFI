@@ -43,7 +43,7 @@ int wait = 5000;  // Indica la espera cada 5 segundos para envío de mensajes MQ
 int pinTrigger=15;//pin del trigger
 int pinEcho=14;//pin del echo
 int distance;//variable que almacena la lectura de la distancia
-int data;
+
 
 // Objetos
 WiFiClient espClient; // Este objeto maneja los datos de conexion WiFi
@@ -141,17 +141,17 @@ void callback(char* topic, byte* message, unsigned int length) {
   // En esta parte puedes agregar las funciones que requieras para actuar segun lo necesites al recibir un mensaje MQTT
 
   // Ejemplo, en caso de recibir el mensaje true - false, se cambiará el estado del led soldado en la placa.
-  // El ESP323CAM está suscrito al tema esp/output
-  if (String(topic) == "esp32/output") {  // En caso de recibirse mensaje en el tema esp32/output
+  // El ESP323CAM está suscrito al tema codigoiot/respues/xaviergrajales
+  if (String(topic) == "codigoiot/respues/xaviergrajales") {  // En caso de recibirse mensaje en el tema codigoiot/respues/xaviergrajales
     if(messageTemp == "true"){
       Serial.println("Led encendido");
       digitalWrite(flashLedPin, HIGH);
-    }// fin del if (String(topic) == "esp32/output")
+    }// fin del if (String(topic) == "codigoiot/respues/xaviergrajales")
     else if(messageTemp == "false"){
       Serial.println("Led apagado");
       digitalWrite(flashLedPin, LOW);
     }// fin del else if(messageTemp == "false")
-  }// fin del if (String(topic) == "esp32/output")
+  }// fin del if (String(topic) == "codigoiot/respues/xaviergrajales")
 }// fin del void callback
 
 // Función para reconectarse
@@ -162,7 +162,7 @@ void reconnect() {
     // Intentar reconexión
     if (client.connect("ESP32CAMClient")) { //Pregunta por el resultado del intento de conexión
       Serial.println("Conectado");
-      client.subscribe("esp32/output"); // Esta función realiza la suscripción al tema
+      client.subscribe("codigoiot/respues/xaviergrajales"); // Esta función realiza la suscripción al tema
     }// fin del  if (client.connect("ESP32CAMClient"))
     else {  //en caso de que la conexión no se logre
       Serial.print("Conexion fallida, Error rc=");
